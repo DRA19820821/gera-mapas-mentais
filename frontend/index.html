@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Mapas Mentais - Direito</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        [x-cloak] { display: none !important; }
+        
+        .log-entry {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" x-data="appData()" x-init="init()">
+    
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                <i class="fas fa-brain text-indigo-600"></i>
+                Gerador de Mapas Mentais
+            </h1>
+            <p class="text-gray-600">Transforme conteúdo jurídico em mapas mentais Mermaid</p>
+        </header>
+        
+        <!-- Main Card -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            
+            <!-- Seleção de LLMs -->
+            <section class="mb-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">
+                    <i class="fas fa-robot mr-2"></i>Configuração dos LLMs
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <!-- LLM01 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            LLM01 - Divisor de Conteúdo
+                        </label>
+                        <select x-model="config.llm01" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="openai">OpenAI (GPT-4o)</option>
+                            <option value="anthropic">Anthropic (Claude Sonnet 4)</option>
+                            <option value="gemini">Google (Gemini 2.5 Flash)</option>
+                            <option value="deepseek">DeepSeek</option>
+                        </select>
+                    </div>
+                    
+                    <!-- LLM02 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            LLM02 - Gerador de Mapas
+                        </label>
+                        <select x-model="config.llm02" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="openai">OpenAI (GPT-4o)</option>
+                            <option value="anthropic">Anthropic (Claude Sonnet 4)</option>
+                            <option value="gemini">Google (Gemini 2.5 Flash)</option>
+                            <option value="deepseek">DeepSeek</option>
+                        </select>
+                    </div>
+                    
+                    <!-- LLM03 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            LLM03 - Revisor
+                        </label>
+                        <select x-model="config.llm03" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="openai">OpenAI (GPT-4o)</option>
+                            <option value="anthropic">Anthropic (Claude Sonnet 4)</option>
+                            <option value="gemini">Google (Gemini 2.5 Flash)</option>
+                            <option value="deepseek">DeepSeek</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Upload de Arquivos -->
+            <section class="mb-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">
+                    <i class="fas fa-upload mr-2"></i>Upload de Arquivos HTML
+                </h2>
+                
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-500 transition-colors">
+                    <input 
+                        type="file" 
+                        id="fileInput" 
+                        multiple 
+                        accept=".html" 
+                        @change="handleFileSelect"
+                        class="hidden"
+                    >
+                    
+                    <label for="fileInput" class="cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 mb-2">Clique ou arraste arquivos HTML aqui</p>
+                        <p class="text-sm text-gray-400">Máximo 10 arquivos por vez</p>
+                    </label>
+                </div>
+                
+                <!-- Lista de arquivos selecionados -->
+                <div x-show="files.length > 0" class="mt-4" x-cloak>
+                    <h3 class="font-medium text-gray-700 mb-2">Arquivos selecionados:</h3>
+                    <ul class="space-y-2">
+                        <template x-for="(file, index) in files" :key="index">
+                            <li class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                                <span class="text-sm text-gray-700">
+                                    <i class="fas fa-file-code text-indigo-600 mr-2"></i>
+                                    <span x-text="file.name"></span>
+                                </span>
+                                <button @click="removeFile(index)" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Botão Processar -->
+            <button 
+                @click="startProcessing" 
+                :disabled="files.length === 0 || processing"
+                class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+                <i class="fas fa-cogs mr-2"></i>
+                <span x-text="processing ? 'Processando...' : 'Gerar Mapas Mentais'"></span>
+            </button>
+        </div>
+        
+        <!-- Progress Section -->
+        <div x-show="processing || completed" class="bg-white rounded-lg shadow-lg p-6 mb-6" x-cloak>
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">
+                <i class="fas fa-spinner fa-spin mr-2" x-show="processing"></i>
+                <i class="fas fa-check-circle text-green-500 mr-2" x-show="completed && !processing"></i>
+                Progresso
+            </h2>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+                <div 
+                    class="bg-indigo-600 h-4 rounded-full progress-bar"
+                    :style="`width: ${progress.percentage}%`"
+                ></div>
+            </div>
+            
+            <p class="text-sm text-gray-600 mb-2" x-text="`${progress.current_step} de ${progress.total_steps} - ${progress.message}`"></p>
+        </div>
+        
+        <!-- Logs Console -->
+        <div x-show="logs.length > 0" class="bg-gray-900 rounded-lg shadow-lg p-6 mb-6" x-cloak>
+            <h2 class="text-xl font-semibold mb-4 text-white">
+                <i class="fas fa-terminal mr-2"></i>Console de Logs
+            </h2>
+            
+            <div class="bg-black rounded p-4 h-64 overflow-y-auto font-mono text-sm">
+                <template x-for="(log, index) in logs" :key="index">
+                    <div class="log-entry mb-1" :class="{
+                        'text-green-400': log.level === 'success',
+                        'text-blue-400': log.level === 'info',
+                        'text-yellow-400': log.level === 'warning',
+                        'text-red-400': log.level === 'error'
+                    }">
+                        <span class="text-gray-500" x-text="log.timestamp"></span>
+                        <span class="ml-2" x-text="log.message"></span>
+                    </div>
+                </template>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div x-show="completed" class="bg-white rounded-lg shadow-lg p-6" x-cloak>
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">
+                <i class="fas fa-file-download mr-2"></i>Arquivos Gerados
+            </h2>
+            
+            <div x-show="results.length > 0" class="space-y-2">
+                <template x-for="(result, index) in results" :key="index">
+                    <div class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                        <span class="text-sm text-gray-700">
+                            <i class="fas fa-file-alt text-green-600 mr-2"></i>
+                            <span x-text="result.file"></span>
+                        </span>
+                        <button 
+                            @click="downloadFile(result.file)"
+                            class="bg-indigo-600 text-white px-4 py-1 rounded hover:bg-indigo-700 text-sm"
+                        >
+                            <i class="fas fa-download mr-1"></i>Download
+                        </button>
+                    </div>
+                </template>
+            </div>
+            
+            <button 
+                @click="reset"
+                class="mt-4 w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700"
+            >
+                <i class="fas fa-redo mr-2"></i>Processar Novos Arquivos
+            </button>
+        </div>
+        
+    </div>
+    
+    <script>
+        function appData() {
+            return {
+                config: {
+                    llm01: 'anthropic',
+                    llm02: 'anthropic',
+                    llm03: 'anthropic'
+                },
+                files: [],
+                processing: false,
+                completed: false,
+                progress: {
+                    percentage: 0,
+                    current_step: 0,
+                    total_steps: 0,
+                    message: ''
+                },
+                logs: [],
+                results: [],
+                ws: null,
+                
+                init() {
+                    this.connectWebSocket();
+                },
+                
+                connectWebSocket() {
+                    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                    this.ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+                    
+                    this.ws.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        this.handleWebSocketMessage(data);
+                    };
+                    
+                    this.ws.onclose = () => {
+                        setTimeout(() => this.connectWebSocket(), 3000);
+                    };
+                },
+                
+                handleWebSocketMessage(data) {
+                    if (data.type === 'progress') {
+                        this.progress = {
+                            percentage: data.percentage || 0,
+                            current_step: data.current_step || 0,
+                            total_steps: data.total_steps || 0,
+                            message: data.message || ''
+                        };
+                    } else if (data.type === 'log') {
+                        this.logs.push({
+                            timestamp: new Date(data.timestamp).toLocaleTimeString(),
+                            level: data.level,
+                            message: data.message
+                        });
+                    } else if (data.type === 'completion') {
+                        this.completed = true;
+                        this.processing = false;
+                    }
+                },
+                
+                handleFileSelect(event) {
+                    this.files = Array.from(event.target.files);
+                },
+                
+                removeFile(index) {
+                    this.files.splice(index, 1);
+                },
+                
+                async startProcessing() {
+                    this.processing = true;
+                    this.logs = [];
+                    this.results = [];
+                    
+                    const formData = new FormData();
+                    this.files.forEach(file => formData.append('files', file));
+                    formData.append('llm01_provider', this.config.llm01);
+                    formData.append('llm02_provider', this.config.llm02);
+                    formData.append('llm03_provider', this.config.llm03);
+                    
+                    try {
+                        const response = await fetch('/api/process', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            this.results = data.results.filter(r => r.success).map(r => ({
+                                file: r.file.replace('.html', '_parte01.mmd')
+                            }));
+                        }
+                    } catch (error) {
+                        alert('Erro ao processar: ' + error.message);
+                        this.processing = false;
+                    }
+                },
+                
+                async downloadFile(filename) {
+                    window.location.href = `/api/download/${filename}`;
+                },
+                
+                reset() {
+                    this.files = [];
+                    this.processing = false;
+                    this.completed = false;
+                    this.progress = { percentage: 0, current_step: 0, total_steps: 0, message: '' };
+                    this.logs = [];
+                    this.results = [];
+                }
+            };
+        }
+    </script>
+</body>
+</html>
