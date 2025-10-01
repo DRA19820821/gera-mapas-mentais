@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 from pathlib import Path
+from .api.routes_parallel import router as parallel_router
 
 from .core.config import get_settings
 from .utils.logger import setup_logger
@@ -80,6 +81,7 @@ app.add_middleware(
 # ============================================
 
 app.include_router(router, prefix="/api", tags=["api"])
+app.include_router(parallel_router, prefix="/api", tags=["parallel"])
 
 
 # ============================================

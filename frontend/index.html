@@ -3,46 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Mapas Mentais - Direito</title>
-    
-    <!-- Tailwind CSS -->
+    <title>Gerador de Mapas Mentais - Otimizado</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         [x-cloak] { display: none !important; }
-        
-        .log-entry {
-            animation: slideIn 0.3s ease-out;
-        }
-        
+        .log-entry { animation: slideIn 0.3s ease-out; }
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        .progress-bar {
-            transition: width 0.5s ease;
-        }
-        
-        .file-badge {
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        .progress-bar { transition: width 0.5s ease; }
+        .mode-card { transition: all 0.3s ease; }
+        .mode-card.selected { 
+            border-color: #4F46E5; 
+            background: #EEF2FF;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
     </style>
 </head>
@@ -52,15 +29,145 @@
         
         <!-- Header -->
         <header class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">
-                <i class="fas fa-brain text-indigo-600"></i>
-                Gerador de Mapas Mentais
-            </h1>
-            <p class="text-gray-600">Transforme conteúdo jurídico em mapas mentais Mermaid</p>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-brain text-indigo-600"></i>
+                        Gerador de Mapas Mentais
+                    </h1>
+                    <p class="text-gray-600">Transforme conteúdo jurídico em mapas mentais Mermaid</p>
+                </div>
+                <div class="text-right">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <i class="fas fa-bolt mr-2"></i>
+                        <span x-text="config.mode === 'parallel' ? 'Modo Paralelo' : 'Modo Sequencial'"></span>
+                    </span>
+                </div>
+            </div>
         </header>
         
         <!-- Main Card -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            
+            <!-- Modo de Processamento -->
+            <section class="mb-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">
+                    <i class="fas fa-rocket mr-2"></i>Modo de Processamento
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Sequencial -->
+                    <div 
+                        @click="config.mode = 'sequential'" 
+                        class="mode-card border-2 rounded-lg p-4 cursor-pointer hover:border-indigo-300"
+                        :class="{'selected': config.mode === 'sequential'}"
+                    >
+                        <div class="flex items-start">
+                            <i class="fas fa-stream text-2xl text-blue-500 mr-3 mt-1"></i>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-1">Sequencial</h3>
+                                <p class="text-sm text-gray-600 mb-2">Processamento tradicional, uma parte por vez</p>
+                                <div class="text-xs space-y-1">
+                                    <div class="flex items-center text-green-600">
+                                        <i class="fas fa-check mr-2"></i>Mais estável
+                                    </div>
+                                    <div class="flex items-center text-green-600">
+                                        <i class="fas fa-check mr-2"></i>Menor uso de API
+                                    </div>
+                                    <div class="flex items-center text-yellow-600">
+                                        <i class="fas fa-clock mr-2"></i>Mais lento
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Paralelo -->
+                    <div 
+                        @click="config.mode = 'parallel'" 
+                        class="mode-card border-2 rounded-lg p-4 cursor-pointer hover:border-indigo-300"
+                        :class="{'selected': config.mode === 'parallel'}"
+                    >
+                        <div class="flex items-start">
+                            <i class="fas fa-bolt text-2xl text-yellow-500 mr-3 mt-1"></i>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-1">
+                                    Paralelo 
+                                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">RÁPIDO</span>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Processa múltiplas partes simultaneamente</p>
+                                <div class="text-xs space-y-1">
+                                    <div class="flex items-center text-green-600">
+                                        <i class="fas fa-check mr-2"></i>2-5x mais rápido
+                                    </div>
+                                    <div class="flex items-center text-green-600">
+                                        <i class="fas fa-check mr-2"></i>Melhor para múltiplos arquivos
+                                    </div>
+                                    <div class="flex items-center text-yellow-600">
+                                        <i class="fas fa-coins mr-2"></i>Mais chamadas de API
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Configurações de Paralelismo -->
+                <div x-show="config.mode === 'parallel'" class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4" x-cloak>
+                    <h4 class="font-medium text-gray-800 mb-3">
+                        <i class="fas fa-sliders-h mr-2"></i>Configurações de Performance
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Workers por arquivo -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Partes simultâneas por arquivo
+                                <span class="text-xs text-gray-500">(1-5)</span>
+                            </label>
+                            <input 
+                                type="range" 
+                                min="1" 
+                                max="5" 
+                                x-model.number="config.maxWorkersPerFile"
+                                class="w-full"
+                            >
+                            <div class="flex justify-between text-xs text-gray-600 mt-1">
+                                <span>Econômico</span>
+                                <span class="font-semibold" x-text="config.maxWorkersPerFile"></span>
+                                <span>Máximo</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Arquivos simultâneos -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Arquivos simultâneos
+                                <span class="text-xs text-gray-500">(1-3)</span>
+                            </label>
+                            <input 
+                                type="range" 
+                                min="1" 
+                                max="3" 
+                                x-model.number="config.maxConcurrentFiles"
+                                class="w-full"
+                            >
+                            <div class="flex justify-between text-xs text-gray-600 mt-1">
+                                <span>Conservador</span>
+                                <span class="font-semibold" x-text="config.maxConcurrentFiles"></span>
+                                <span>Agressivo</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 text-xs text-gray-600">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Configuração atual processará até 
+                        <strong x-text="config.maxWorkersPerFile * config.maxConcurrentFiles"></strong>
+                        partes simultaneamente
+                    </div>
+                </div>
+            </section>
             
             <!-- Seleção de LLMs -->
             <section class="mb-6">
@@ -69,43 +176,39 @@
                 </h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    
-                    <!-- LLM01 -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            LLM01 - Divisor de Conteúdo
+                            LLM01 - Divisor
                         </label>
-                        <select x-model="config.llm01" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                            <option value="openai">OpenAI (GPT-4.1)</option>
-                            <option value="anthropic">Anthropic (Claude Sonnet 4)</option>
-                            <option value="gemini">Google (Gemini 2.5 Pro)</option>
-                            <option value="deepseek">DeepSeek (Reasoner)</option>
+                        <select x-model="config.llm01" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                            <option value="anthropic">Anthropic (Claude)</option>
+                            <option value="openai">OpenAI (GPT-4)</option>
+                            <option value="gemini">Google (Gemini)</option>
+                            <option value="deepseek">DeepSeek</option>
                         </select>
                     </div>
                     
-                    <!-- LLM02 -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            LLM02 - Gerador de Mapas
+                            LLM02 - Gerador
                         </label>
-                        <select x-model="config.llm02" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                            <option value="openai">OpenAI (GPT-4.1)</option>
-                            <option value="anthropic">Anthropic (Claude Sonnet 4)</option>
-                            <option value="gemini">Google (Gemini 2.5 Pro)</option>
-                            <option value="deepseek">DeepSeek (Reasoner)</option>
+                        <select x-model="config.llm02" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                            <option value="anthropic">Anthropic (Claude)</option>
+                            <option value="openai">OpenAI (GPT-4)</option>
+                            <option value="gemini">Google (Gemini)</option>
+                            <option value="deepseek">DeepSeek</option>
                         </select>
                     </div>
                     
-                    <!-- LLM03 -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             LLM03 - Revisor
                         </label>
-                        <select x-model="config.llm03" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                            <option value="openai">OpenAI (GPT-4.1)</option>
-                            <option value="anthropic">Anthropic (Claude Sonnet 4)</option>
-                            <option value="gemini">Google (Gemini 2.5 Pro)</option>
-                            <option value="deepseek">DeepSeek (Reasoner)</option>
+                        <select x-model="config.llm03" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                            <option value="anthropic">Anthropic (Claude)</option>
+                            <option value="openai">OpenAI (GPT-4)</option>
+                            <option value="gemini">Google (Gemini)</option>
+                            <option value="deepseek">DeepSeek</option>
                         </select>
                     </div>
                 </div>
@@ -126,7 +229,6 @@
                         @change="handleFileSelect"
                         class="hidden"
                     >
-                    
                     <label for="fileInput" class="cursor-pointer">
                         <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
                         <p class="text-gray-600 mb-2">Clique ou arraste arquivos HTML aqui</p>
@@ -134,9 +236,11 @@
                     </label>
                 </div>
                 
-                <!-- Lista de arquivos selecionados -->
+                <!-- Lista de arquivos -->
                 <div x-show="files.length > 0" class="mt-4" x-cloak>
-                    <h3 class="font-medium text-gray-700 mb-2">Arquivos selecionados:</h3>
+                    <h3 class="font-medium text-gray-700 mb-2">
+                        Arquivos selecionados (<span x-text="files.length"></span>):
+                    </h3>
                     <ul class="space-y-2">
                         <template x-for="(file, index) in files" :key="index">
                             <li class="flex items-center justify-between bg-gray-50 p-3 rounded">
@@ -157,11 +261,21 @@
             <button 
                 @click="startProcessing" 
                 :disabled="files.length === 0 || processing"
-                class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
-                <i class="fas fa-cogs mr-2"></i>
-                <span x-text="processing ? 'Processando...' : 'Gerar Mapas Mentais'"></span>
+                <i :class="processing ? 'fas fa-spinner fa-spin' : 'fas fa-cogs'"></i>
+                <span x-text="processing ? 'Processando...' : (config.mode === 'parallel' ? 'Gerar Mapas (Modo Rápido)' : 'Gerar Mapas Mentais')"></span>
+                <span x-show="config.mode === 'parallel' && !processing" class="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs">
+                    ⚡ TURBO
+                </span>
             </button>
+            
+            <!-- Tempo estimado -->
+            <div x-show="files.length > 0 && !processing" class="mt-2 text-center text-sm text-gray-600" x-cloak>
+                <i class="fas fa-clock mr-1"></i>
+                Tempo estimado: 
+                <span x-text="getEstimatedTime()"></span>
+            </div>
         </div>
         
         <!-- Progress Section -->
@@ -172,7 +286,6 @@
                 Progresso
             </h2>
             
-            <!-- Progress Bar -->
             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
                 <div 
                     class="bg-indigo-600 h-4 rounded-full progress-bar"
@@ -183,7 +296,6 @@
             <div class="text-sm text-gray-600">
                 <p class="mb-1" x-text="`Etapa ${progress.current_step} de ${progress.total_steps}`"></p>
                 <p class="font-medium" x-text="progress.message"></p>
-                <p class="text-xs text-gray-500 mt-1" x-show="progress.html_file" x-text="`Arquivo: ${progress.html_file}`"></p>
             </div>
         </div>
         
@@ -208,21 +320,21 @@
             </div>
         </div>
         
-        <!-- Results Section - VERSÃO MELHORADA -->
+        <!-- Results -->
         <div x-show="completed" class="bg-white rounded-lg shadow-lg p-6" x-cloak>
             <h2 class="text-xl font-semibold mb-4 text-gray-700">
-                <i class="fas fa-check-circle text-green-500 mr-2"></i>Processamento Concluído!
+                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                Processamento Concluído!
             </h2>
             
-            <!-- Info sobre onde estão salvos -->
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+            <!-- Performance metrics (só no modo paralelo) -->
+            <div x-show="performanceMetrics.speedup > 1" class="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
                 <div class="flex items-start">
-                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
+                    <i class="fas fa-chart-line text-green-500 mt-1 mr-3"></i>
                     <div>
-                        <p class="font-medium text-blue-800">Arquivos salvos automaticamente</p>
-                        <p class="text-sm text-blue-700 mt-1">
-                            Todos os mapas mentais foram salvos na pasta: 
-                            <code class="bg-blue-100 px-2 py-1 rounded text-xs font-mono">output/</code>
+                        <p class="font-medium text-green-800">Ganho de Performance</p>
+                        <p class="text-sm text-green-700 mt-1">
+                            Processamento <strong x-text="`${performanceMetrics.speedup}x`"></strong> mais rápido que o modo sequencial!
                         </p>
                     </div>
                 </div>
@@ -237,7 +349,7 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <template x-for="(file, index) in filesGenerated" :key="index">
-                        <div class="file-badge flex items-center bg-green-50 border border-green-200 p-3 rounded">
+                        <div class="flex items-center bg-green-50 border border-green-200 p-3 rounded">
                             <i class="fas fa-file-code text-green-600 mr-2"></i>
                             <span class="text-sm text-gray-700 font-mono" x-text="file"></span>
                         </div>
@@ -245,31 +357,10 @@
                 </div>
             </div>
             
-            <!-- Como usar os arquivos -->
-            <div class="bg-gray-50 border border-gray-200 rounded p-4 mb-4">
-                <h4 class="font-medium text-gray-800 mb-2">
-                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Como usar os mapas mentais:
-                </h4>
-                <ol class="text-sm text-gray-600 space-y-1 list-decimal list-inside">
-                    <li>Abra a pasta <code class="bg-gray-200 px-1 rounded">output/</code> no seu explorador de arquivos</li>
-                    <li>Copie o conteúdo de um arquivo <code class="bg-gray-200 px-1 rounded">.mmd</code></li>
-                    <li>Cole em <a href="https://mermaid.live/" target="_blank" class="text-indigo-600 hover:underline">mermaid.live</a> para visualizar</li>
-                    <li>Ou use em ferramentas compatíveis (Obsidian, Notion, VS Code, etc)</li>
-                </ol>
-            </div>
-            
-            <!-- Botões de ação -->
             <div class="flex gap-3">
                 <button 
-                    @click="openOutputFolder"
-                    class="flex-1 bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition-colors"
-                >
-                    <i class="fas fa-folder-open mr-2"></i>Abrir Pasta Output
-                </button>
-                
-                <button 
                     @click="reset"
-                    class="flex-1 bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition-colors"
+                    class="flex-1 bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition-colors"
                 >
                     <i class="fas fa-redo mr-2"></i>Processar Novos Arquivos
                 </button>
@@ -282,24 +373,21 @@
         function appData() {
             return {
                 config: {
+                    mode: 'parallel', // 'sequential' ou 'parallel'
                     llm01: 'anthropic',
                     llm02: 'anthropic',
-                    llm03: 'anthropic'
+                    llm03: 'anthropic',
+                    maxWorkersPerFile: 3,
+                    maxConcurrentFiles: 2
                 },
                 files: [],
                 processing: false,
                 completed: false,
-                progress: {
-                    percentage: 0,
-                    current_step: 0,
-                    total_steps: 0,
-                    message: '',
-                    html_file: ''
-                },
+                progress: { percentage: 0, current_step: 0, total_steps: 0, message: '' },
                 logs: [],
                 filesGenerated: [],
-                outputDir: 'output',
                 ws: null,
+                performanceMetrics: { speedup: 0 },
                 
                 init() {
                     this.connectWebSocket();
@@ -309,37 +397,19 @@
                     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                     this.ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
                     
-                    this.ws.onopen = () => {
-                        console.log('WebSocket conectado');
-                        this.addLog('info', '🔌 Conectado ao servidor');
-                    };
-                    
-                    this.ws.onmessage = (event) => {
-                        const data = JSON.parse(event.data);
-                        this.handleWebSocketMessage(data);
-                    };
-                    
-                    this.ws.onerror = (error) => {
-                        console.error('WebSocket erro:', error);
-                        this.addLog('error', '❌ Erro de conexão com servidor');
-                    };
-                    
-                    this.ws.onclose = () => {
-                        console.log('WebSocket desconectado. Reconectando em 3s...');
-                        setTimeout(() => this.connectWebSocket(), 3000);
-                    };
+                    this.ws.onopen = () => this.addLog('info', '🔌 Conectado ao servidor');
+                    this.ws.onmessage = (event) => this.handleWebSocketMessage(JSON.parse(event.data));
+                    this.ws.onerror = () => this.addLog('error', '❌ Erro de conexão');
+                    this.ws.onclose = () => setTimeout(() => this.connectWebSocket(), 3000);
                 },
                 
                 handleWebSocketMessage(data) {
-                    console.log('WebSocket mensagem:', data);
-                    
                     if (data.type === 'progress') {
                         this.progress = {
                             percentage: data.percentage || 0,
                             current_step: data.current_step || 0,
                             total_steps: data.total_steps || 0,
-                            message: data.message || '',
-                            html_file: data.html_file || ''
+                            message: data.message || ''
                         };
                     } 
                     else if (data.type === 'log') {
@@ -349,9 +419,9 @@
                         this.completed = true;
                         this.processing = false;
                         this.filesGenerated = data.files_generated || [];
-                        this.outputDir = data.output_dir || 'output';
-                        
-                        this.addLog('success', `✅ Concluído! ${this.filesGenerated.length} arquivo(s) gerado(s)`);
+                        if (data.performance) {
+                            this.performanceMetrics = data.performance;
+                        }
                     }
                 },
                 
@@ -361,13 +431,9 @@
                         level: level,
                         message: message
                     });
-                    
-                    // Auto-scroll para o final
                     setTimeout(() => {
-                        const logContainer = document.querySelector('.bg-black');
-                        if (logContainer) {
-                            logContainer.scrollTop = logContainer.scrollHeight;
-                        }
+                        const el = document.querySelector('.bg-black');
+                        if (el) el.scrollTop = el.scrollHeight;
                     }, 100);
                 },
                 
@@ -384,13 +450,7 @@
                     this.completed = false;
                     this.logs = [];
                     this.filesGenerated = [];
-                    this.progress = {
-                        percentage: 0,
-                        current_step: 0,
-                        total_steps: 0,
-                        message: 'Iniciando...',
-                        html_file: ''
-                    };
+                    this.performanceMetrics = { speedup: 0 };
                     
                     const formData = new FormData();
                     this.files.forEach(file => formData.append('files', file));
@@ -398,8 +458,18 @@
                     formData.append('llm02_provider', this.config.llm02);
                     formData.append('llm03_provider', this.config.llm03);
                     
+                    // Adiciona parâmetros de paralelização se estiver no modo paralelo
+                    const endpoint = this.config.mode === 'parallel' 
+                        ? '/api/process-parallel' 
+                        : '/api/process';
+                    
+                    if (this.config.mode === 'parallel') {
+                        formData.append('max_workers_per_file', this.config.maxWorkersPerFile);
+                        formData.append('max_concurrent_files', this.config.maxConcurrentFiles);
+                    }
+                    
                     try {
-                        const response = await fetch('/api/process', {
+                        const response = await fetch(endpoint, {
                             method: 'POST',
                             body: formData
                         });
@@ -410,43 +480,44 @@
                             throw new Error(data.detail || 'Erro no processamento');
                         }
                         
-                        // Os arquivos já foram enviados via WebSocket na completion
-                        // Mas garantimos que temos a lista aqui também
-                        if (!this.filesGenerated.length && data.files_generated) {
-                            this.filesGenerated = data.files_generated;
-                            this.outputDir = data.output_directory;
+                        if (data.performance) {
+                            this.performanceMetrics = data.performance;
                         }
                         
                     } catch (error) {
-                        console.error('Erro:', error);
-                        alert('Erro ao processar: ' + error.message);
+                        alert('Erro: ' + error.message);
                         this.processing = false;
                         this.addLog('error', `❌ ${error.message}`);
                     }
                 },
                 
-                openOutputFolder() {
-                    // Tenta abrir a pasta (funciona em alguns navegadores/sistemas)
-                    // Como não podemos abrir pastas diretamente do navegador,
-                    // vamos mostrar um alerta com instruções
-                    alert(
-                        `📁 Para acessar seus arquivos:\n\n` +
-                        `1. Abra o explorador de arquivos\n` +
-                        `2. Navegue até a pasta do projeto\n` +
-                        `3. Entre na pasta: ${this.outputDir}/\n\n` +
-                        `Caminho completo: [sua-pasta-projeto]/${this.outputDir}/`
-                    );
+                getEstimatedTime() {
+                    const numFiles = this.files.length;
+                    if (numFiles === 0) return '-';
+                    
+                    if (this.config.mode === 'sequential') {
+                        const minutesPerFile = 3;
+                        const total = numFiles * minutesPerFile;
+                        return `~${total} minutos`;
+                    } else {
+                        const minutesPerFile = 3;
+                        const parallelFactor = Math.min(
+                            this.config.maxConcurrentFiles,
+                            numFiles
+                        );
+                        const total = Math.ceil((numFiles * minutesPerFile) / parallelFactor);
+                        return `~${total} minutos (${Math.round(parallelFactor)}x mais rápido)`;
+                    }
                 },
                 
                 reset() {
                     this.files = [];
                     this.processing = false;
                     this.completed = false;
-                    this.progress = { percentage: 0, current_step: 0, total_steps: 0, message: '', html_file: '' };
+                    this.progress = { percentage: 0, current_step: 0, total_steps: 0, message: '' };
                     this.logs = [];
                     this.filesGenerated = [];
-                    
-                    // Limpa o input de arquivo
+                    this.performanceMetrics = { speedup: 0 };
                     document.getElementById('fileInput').value = '';
                 }
             };
