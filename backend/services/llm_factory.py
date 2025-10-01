@@ -23,10 +23,10 @@ from ..utils.logger import logger
 # ============================================
 
 DEFAULT_MODELS = {
-    "openai": "gpt-4o",
+    "openai": "gpt-4.1",
     "anthropic": "claude-sonnet-4-20250514",
-    "gemini": "gemini-2.5-flash",
-    "deepseek": "deepseek-chat"
+    "gemini": "gemini-2.5-pro",
+    "deepseek": "deepseek-reasoner"
 }
 
 
