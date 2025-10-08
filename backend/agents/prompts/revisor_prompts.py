@@ -28,6 +28,9 @@ CRITÉRIOS DE AVALIAÇÃO:
    - Formato mindmap correto
    - Título com {{**texto**}}
    - Ícones com ::icon(fa fa-nome)
+   - NUNCA utilizar parênteses "()" e colchetes "[]"  no texto dos ramos
+        -ERRADO E PROIBIDO: **Princípios Norteadores (Lei 14.133/21)**
+        -CORRETO: **Princípios Norteadores: Lei 14.133/21**
    - Indentação consistente (múltiplos de 2 espaços)
    - Sem caracteres especiais problemáticos
    - Máximo 4 níveis de profundidade

@@ -47,7 +47,7 @@ class Settings(BaseSettings):
     max_tentativas_revisao: int = 3
     """Número máximo de tentativas de revisão por mapa mental"""
     
-    max_files_per_upload: int = 10
+    max_files_per_upload: int = 20
     """Número máximo de arquivos HTML por upload"""
     
     # ============================================
