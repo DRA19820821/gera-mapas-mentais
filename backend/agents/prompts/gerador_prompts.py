@@ -9,6 +9,8 @@ REGRAS CRÍTICAS:
    - NUNCA utilizar parênteses "()" e colchetes "[]"  no texto dos ramos
         -ERRADO E PROIBIDO: **Princípios Norteadores (Lei 14.133/21)**
         -CORRETO: **Princípios Norteadores: Lei 14.133/21**
+        -ERRADO E PROIBIDO: Exceção: atos vinculados (ex: CNH)
+        -CORRETO: **Princípios Norteadores: Exceção: atos vinculados -ex: CNH-
 2. O título do mapa deve seguir o padrão: {{**Tópico - Parte Específica**}}
 3. Use ícones Font Awesome com ::icon(fa fa-nome-icone)
 4. Máximo de 4 níveis de profundidade
@@ -61,6 +63,13 @@ USER_PROMPT_TEMPLATE = """Crie um mapa mental para o seguinte conteúdo:
 {conteudo_parte}
 
 ---
+
+ATENÇÃO:
+   - NUNCA utilizar parênteses "()" e colchetes "[]"  no texto dos ramos
+        -ERRADO E PROIBIDO: **Princípios Norteadores (Lei 14.133/21)**
+        -CORRETO: **Princípios Norteadores: Lei 14.133/21**
+        -ERRADO E PROIBIDO: Exceção: atos vinculados (ex: CNH)
+        -CORRETO: **Princípios Norteadores: Exceção: atos vinculados -ex: CNH-
 
 Gere APENAS o código Mermaid seguindo rigorosamente o formato do exemplo.
 Não adicione explicações, markdown ou texto fora do bloco mermaid.

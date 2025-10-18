@@ -31,6 +31,8 @@ CRITÉRIOS DE AVALIAÇÃO:
    - NUNCA utilizar parênteses "()" e colchetes "[]"  no texto dos ramos
         -ERRADO E PROIBIDO: **Princípios Norteadores (Lei 14.133/21)**
         -CORRETO: **Princípios Norteadores: Lei 14.133/21**
+        -ERRADO E PROIBIDO: Exceção: atos vinculados (ex: CNH)
+        -CORRETO: **Princípios Norteadores: Exceção: atos vinculados -ex: CNH-
    - Indentação consistente (múltiplos de 2 espaços)
    - Sem caracteres especiais problemáticos
    - Máximo 4 níveis de profundidade
@@ -139,6 +141,13 @@ INSTRUÇÕES DE AVALIAÇÃO:
 4. Avalie se os PONTOS PRINCIPAIS DESTE TRECHO estão representados
 5. Verifique se os conceitos DESTE TRECHO estão corretos
 6. NÃO penalize por não cobrir aspectos de outras partes do tópico
+
+ATENÇÃO:
+   - NUNCA SE PODE utilizar parênteses "()" e colchetes "[]"  no texto dos ramos
+        -ERRADO E PROIBIDO: **Princípios Norteadores (Lei 14.133/21)**
+        -CORRETO: **Princípios Norteadores: Lei 14.133/21**
+        -ERRADO E PROIBIDO: Exceção: atos vinculados (ex: CNH)
+        -CORRETO: **Princípios Norteadores: Exceção: atos vinculados -ex: CNH-
 
 Forneça sua avaliação em formato JSON estruturado.
 """

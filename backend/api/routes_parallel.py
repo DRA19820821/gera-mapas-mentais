@@ -35,7 +35,7 @@ async def process_htmls_parallel(
     
     Configurações de performance:
     - max_workers_per_file: Quantas partes processar simultaneamente por arquivo (1-5)
-    - max_concurrent_files: Quantos arquivos processar simultaneamente (1-3)
+    - max_concurrent_files: Quantos arquivos processar simultaneamente (1-5)
     
     Exemplo:
     - 1 arquivo com 6 partes, max_workers=3: processa 3 partes por vez
@@ -55,7 +55,7 @@ async def process_htmls_parallel(
         if not (1 <= max_workers_per_file <= 5):
             raise HTTPException(400, "max_workers_per_file deve estar entre 1 e 5")
         
-        if not (1 <= max_concurrent_files <= 3):
+        if not (1 <= max_concurrent_files <= 5):
             raise HTTPException(400, "max_concurrent_files deve estar entre 1 e 3")
         
         # Salva arquivos
